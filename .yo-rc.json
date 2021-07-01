@@ -41,6 +41,8 @@
     "packageFolder": "io/github/com",
     "jwtSecretKey": "OTMwNTE4MGFkNTY3NGNiYWQ5MjgwMTU2YjU0MWY2NzFjZjFhMDRjZWY0YTU4MTAxMWFkY2VlNTc5MmI5YTdkYjNlMzQxNjM5MTEyMmM5ZjE3YmNhNmE2YzA2M2YyMjZkNjY0NTFkYzdiOGZlZDhiMWFlNjUwZTE1ZWY5ZjI1ZGQ=",
     "clientPackageManager": "npm",
-    "languages": ["en", "fr"]
+    "languages": ["en", "fr"],
+    "lastLiquibaseTimestamp": 1625143827000,
+    "entities": ["Payment"]
   }
 }

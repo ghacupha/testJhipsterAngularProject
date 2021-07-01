@@ -46,6 +46,7 @@ public class CacheConfiguration {
             createCache(cm, io.github.com.domain.User.class.getName());
             createCache(cm, io.github.com.domain.Authority.class.getName());
             createCache(cm, io.github.com.domain.User.class.getName() + ".authorities");
+            createCache(cm, io.github.com.domain.Payment.class.getName());
             // jhipster-needle-caffeine-add-entry
         };
     }

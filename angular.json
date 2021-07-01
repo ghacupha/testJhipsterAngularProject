@@ -95,6 +95,7 @@
   },
   "defaultProject": "test-project",
   "cli": {
+    "analytics": "a4d500a9-7871-404f-8dff-d11b0f49387a",
     "packageManager": "npm"
   }
 }
