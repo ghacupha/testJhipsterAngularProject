@@ -20,7 +20,7 @@
     "reactive": false,
     "authenticationType": "jwt",
     "packageName": "io.github.com",
-    "serverPort": "8080",
+    "serverPort": "8383",
     "cacheProvider": "caffeine",
     "enableHibernateCache": true,
     "databaseType": "sql",
