@@ -10,8 +10,8 @@ import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { PaymentDeleteDialogComponent } from '../delete/payment-delete-dialog.component';
 import { select, Store } from '@ngrx/store';
 import { State } from 'app/core/state/reducers/payment.reducer';
-import { paymentListRequested } from 'app/core/state/actions/payment.actions';
-import { selectPayments } from 'app/core/state/selectors/payment.selectors';
+import { paymentListRequested, paymentListSyncRequested } from 'app/core/state/actions/payment.actions';
+import { selectPayments, selectPaymentsResponse } from 'app/core/state/selectors/payment.selectors';
 
 @Component({
   selector: 'jhi-payment',
@@ -44,13 +44,20 @@ export class PaymentComponent implements OnInit {
       })
     );
 
-    this.isLoading = false;
-
-    this.store.pipe(select(selectPayments)).subscribe(res => {
+    this.store.pipe(select(selectPaymentsResponse)).subscribe(res => {
       if (res !== null) {
-        this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
+        // to sync response with payments list
+        this.store.dispatch(paymentListSyncRequested());
+
+        // now we can select the synchronized payments
+        this.store.pipe(select(selectPayments)).subscribe(payments => {
+          // I know I know don't judge
+          this.onSuccess(payments, res.headers, pageToLoad, !dontNavigate);
+        });
       }
     });
+
+    this.isLoading = false;
   }
 
   ngOnInit(): void {

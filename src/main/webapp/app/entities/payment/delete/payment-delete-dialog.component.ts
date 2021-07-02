@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IPayment } from '../payment.model';
-import { PaymentService } from '../service/payment.service';
+import { Store } from '@ngrx/store';
+import { State } from 'app/core/state/reducers/payment.reducer';
+import { paymentDeletionRequested } from 'app/core/state/actions/payment.actions';
 
 @Component({
   templateUrl: './payment-delete-dialog.component.html',
@@ -10,15 +12,15 @@ import { PaymentService } from '../service/payment.service';
 export class PaymentDeleteDialogComponent {
   payment?: IPayment;
 
-  constructor(protected paymentService: PaymentService, public activeModal: NgbActiveModal) {}
+  constructor(private store: Store<State>, public activeModal: NgbActiveModal) {}
 
   cancel(): void {
     this.activeModal.dismiss();
   }
 
   confirmDelete(id: number): void {
-    this.paymentService.delete(id).subscribe(() => {
-      this.activeModal.close('deleted');
-    });
+    this.store.dispatch(paymentDeletionRequested({ id }));
+
+    this.activeModal.close('deleted');
   }
 }

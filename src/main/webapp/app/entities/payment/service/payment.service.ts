@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as dayjs from 'dayjs';
 
@@ -9,6 +9,9 @@ import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IPayment, getPaymentIdentifier } from '../payment.model';
+import { paymentDeletionCompleted } from 'app/core/state/actions/payment.actions';
+import { Store } from '@ngrx/store';
+import { State } from 'app/core/state/reducers/payment.reducer';
 
 export type EntityResponseType = HttpResponse<IPayment>;
 export type EntityArrayResponseType = HttpResponse<IPayment[]>;
@@ -17,7 +20,7 @@ export type EntityArrayResponseType = HttpResponse<IPayment[]>;
 export class PaymentService {
   public resourceUrl = this.applicationConfigService.getEndpointFor('api/payments');
 
-  constructor(protected http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(protected http: HttpClient, private applicationConfigService: ApplicationConfigService, private store: Store<State>) {}
 
   create(payment: IPayment): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(payment);
@@ -53,8 +56,13 @@ export class PaymentService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<{}>> {
-    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  delete(id: number): Observable<any> {
+    this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' }).subscribe(() => {
+      // manually remove this item from the store
+      this.store.dispatch(paymentDeletionCompleted({ id }));
+    });
+
+    return EMPTY;
   }
 
   addPaymentToCollectionIfMissing(paymentCollection: IPayment[], ...paymentsToCheck: (IPayment | null | undefined)[]): IPayment[] {
