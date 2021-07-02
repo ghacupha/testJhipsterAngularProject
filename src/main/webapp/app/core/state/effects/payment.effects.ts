@@ -14,13 +14,11 @@ export class PaymentEffects {
   requestListEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(paymentListRequested),
-      switchMap(
-        // todo design an object for the request parameters
-        () =>
-          this.paymentService.query().pipe(
-            map(payments => paymentListRequestedSuccessfully({ payments })),
-            catchError(error => of(paymentListRequestedWithError({ error })))
-          )
+      switchMap(action =>
+        this.paymentService.query(action.serviceRequest).pipe(
+          map(payments => paymentListRequestedSuccessfully({ payments })),
+          catchError(error => of(paymentListRequestedWithError({ error })))
+        )
       )
     )
   );

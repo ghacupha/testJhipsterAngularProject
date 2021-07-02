@@ -1,3 +1,5 @@
 export interface ServiceRequest {
-  // todo add fields for requests
+  page: number;
+  size: number;
+  sort: string[];
 }

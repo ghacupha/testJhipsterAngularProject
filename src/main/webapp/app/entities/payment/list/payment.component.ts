@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPayment } from '../payment.model';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
-import { PaymentService } from '../service/payment.service';
 import { PaymentDeleteDialogComponent } from '../delete/payment-delete-dialog.component';
 import { select, Store } from '@ngrx/store';
 import { State } from 'app/core/state/reducers/payment.reducer';
@@ -29,7 +28,6 @@ export class PaymentComponent implements OnInit {
   ngbPaginationPage = 1;
 
   constructor(
-    protected paymentService: PaymentService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected modalService: NgbModal,
@@ -40,22 +38,13 @@ export class PaymentComponent implements OnInit {
     this.isLoading = true;
     const pageToLoad: number = page ?? this.page ?? 1;
 
-    this.paymentService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
+    this.store.dispatch(
+      paymentListRequested({
+        serviceRequest: { page: pageToLoad - 1, size: this.itemsPerPage, sort: this.sort() },
       })
-      .subscribe(
-        (res: HttpResponse<IPayment[]>) => {
-          this.isLoading = false;
-          //this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
-        },
-        () => {
-          this.isLoading = false;
-          this.onError();
-        }
-      );
+    );
+
+    this.isLoading = false;
 
     this.store.pipe(select(selectPayments)).subscribe(res => {
       if (res !== null) {
@@ -66,8 +55,6 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleNavigation();
-
-    this.store.dispatch(paymentListRequested());
   }
 
   trackId(index: number, item: IPayment): number {

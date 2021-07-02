@@ -28,7 +28,7 @@ import { ErrorComponent } from './layouts/error/error.component';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { PaymentEffects } from 'app/core/state/effects/payment.effects';
-import { paymentFatureSelectorKey, paymentsReducer } from 'app/core/state/reducers/payment.reducer';
+import { paymentFeatureSelectorKey, paymentsReducer } from 'app/core/state/reducers/payment.reducer';
 
 @NgModule({
   imports: [
@@ -38,7 +38,7 @@ import { paymentFatureSelectorKey, paymentsReducer } from 'app/core/state/reduce
     // jhipster-needle-angular-add-module JHipster will add new module here
     EntityRoutingModule,
     AppRoutingModule,
-    StoreModule.forFeature(paymentFatureSelectorKey, paymentsReducer),
+    StoreModule.forFeature(paymentFeatureSelectorKey, paymentsReducer),
     EffectsModule.forFeature([PaymentEffects]),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
