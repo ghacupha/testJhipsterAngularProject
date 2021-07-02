@@ -25,6 +25,10 @@ import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
 import { ErrorComponent } from './layouts/error/error.component';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { PaymentEffects } from 'app/core/state/effects/payment.effects';
+import { paymentFatureSelectorKey, paymentsReducer } from 'app/core/state/reducers/payment.reducer';
 
 @NgModule({
   imports: [
@@ -34,6 +38,10 @@ import { ErrorComponent } from './layouts/error/error.component';
     // jhipster-needle-angular-add-module JHipster will add new module here
     EntityRoutingModule,
     AppRoutingModule,
+    StoreModule.forFeature(paymentFatureSelectorKey, paymentsReducer),
+    EffectsModule.forFeature([PaymentEffects]),
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
     // Set this to true to enable service worker (PWA)
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
     HttpClientModule,

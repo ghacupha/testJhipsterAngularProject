@@ -9,13 +9,17 @@ import { IPayment } from '../payment.model';
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { PaymentService } from '../service/payment.service';
 import { PaymentDeleteDialogComponent } from '../delete/payment-delete-dialog.component';
+import { select, Store } from '@ngrx/store';
+import { State } from 'app/core/state/reducers/payment.reducer';
+import { paymentListRequested } from 'app/core/state/actions/payment.actions';
+import { selectPayments } from 'app/core/state/selectors/payment.selectors';
 
 @Component({
   selector: 'jhi-payment',
   templateUrl: './payment.component.html',
 })
 export class PaymentComponent implements OnInit {
-  payments?: IPayment[];
+  payments?: IPayment[] | null | undefined;
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -28,7 +32,8 @@ export class PaymentComponent implements OnInit {
     protected paymentService: PaymentService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    private store: Store<State>
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -44,17 +49,25 @@ export class PaymentComponent implements OnInit {
       .subscribe(
         (res: HttpResponse<IPayment[]>) => {
           this.isLoading = false;
-          this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
+          //this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
         },
         () => {
           this.isLoading = false;
           this.onError();
         }
       );
+
+    this.store.pipe(select(selectPayments)).subscribe(res => {
+      if (res !== null) {
+        this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
+      }
+    });
   }
 
   ngOnInit(): void {
     this.handleNavigation();
+
+    this.store.dispatch(paymentListRequested());
   }
 
   trackId(index: number, item: IPayment): number {
